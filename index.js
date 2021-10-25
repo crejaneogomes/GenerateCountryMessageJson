@@ -1,5 +1,7 @@
 const fs = require("fs");
-const paises = require("./countries.json");
+const countriesJson = require("./countries.json");
+const REGEX_FIRST_LETTER = '/^\w/';
+const REGEX_WHITE_SPACE = '/\s/g';
 
 const writeInFile = (data) => {
   fs.writeFile("input.json", JSON.stringify(data), function (err) {
@@ -8,51 +10,38 @@ const writeInFile = (data) => {
   });
 };
 
-(function () {
-  let i;
-  var json = {};
-  var jsonPai = {};
-  var vetorfinal = [];
-  var imprimir = [];
-  for (i = 0; i < paises.length; i++) {
-    var col1 = paises[i].nome_pais_int;
-    var columnName = "id";
-    var col2 = "defaultMessage";
-    json[columnName] = "DataSections.ResidenceData." + paises[i].nome_pais_int;
-    json[col2] = paises[i].nome_pais;
-    jsonPai[col1] = json;
-    vetorfinal.push(jsonPai);
-    col1 = null;
-    json = {};
-    jsonPai = {};
-  }
-  writeInFile(vetorfinal);
-})();
+const removeWhiteSpacesAndSpecialCharacters = (word) => {
+  return word.replace(REGEX_WHITE_SPACE, "")
+  .replace("&", "")
+  .replace("(", "")
+  .replace(")", "")
+  .replace("Å", "")
+  .replace("é", "")
+  .replace(".", "");
+}
+
+const replaceWhiteSpaceForUnderlineandRemoveSpecialCharacters = (word) => {
+  return word.replace(REGEX_WHITE_SPACE, "_")
+  .replace("&", "")
+  .replace("(", "")
+  .replace(")", "")
+  .replace("Å", "")
+  .replace("é", "")
+  .replace(".", "");
+}
+
+const firstLetterInLowerCase = (word) => {
+ return word.replace(REGEX_FIRST_LETTER, (c) => c.toLowerCase());
+}
 
 const generateTexts = () => {
   var json = {};
   var jsonPai = {};
   var vetorfinal = [];
-  for (i = 0; i < paises.length; i++) {
-    var primeira = paises[i].nome_pais_int.replace(/^\w/, (c) =>
-      c.toLowerCase()
-    );
-    var pais_ingles = primeira
-      .replace(/\s/g, "")
-      .replace("&", "")
-      .replace("(", "")
-      .replace(")", "")
-      .replace("Å", "")
-      .replace("é", "")
-      .replace(".", "");
-    var pais_ingles_diferente = primeira
-      .replace(/\s/g, "_")
-      .replace("&", "")
-      .replace("(", "")
-      .replace(")", "")
-      .replace("Å", "")
-      .replace("é", "")
-      .replace(".", "");
+  for (i = 0; i < countriesJson.length; i++) {
+    var primeira = firstLetterInLowerCase(countriesJson[i].nome_pais_int);
+    var pais_ingles = removeWhiteSpacesAndSpecialCharacters(primeira);
+    var pais_ingles_diferente = replaceWhiteSpaceForUnderlineandRemoveSpecialCharacters(primeira);
     //console.log(pais_ingles+'Country: { id: \'DataSections.ResidenceData.'+pais_ingles+'Country\', defaultMessage: \''+pais[i].nome_pais+'\',},');
     //console.log('[COUNTRY.'+pais_ingles_diferente.toUpperCase()+']: messages.'+pais_ingles+'Country,');
     console.log(
@@ -63,3 +52,20 @@ const generateTexts = () => {
     );
   }
 };
+
+(function () {
+  let index;
+  var resultVector = [];
+  for (index = 0; index < countriesJson.length; index++) {
+    var json = {};
+    var formattedJson = {};
+    var fatherAttribute = countriesJson[index].nome_pais_int;
+    var idAttribute = "id";
+    var messageAttribute = "defaultMessage";
+    json[idAttribute] = "DataSections.ResidenceData." + countriesJson[index].nome_pais_int;
+    json[messageAttribute] = countriesJson[index].nome_pais;
+    formattedJson[fatherAttribute] = json;
+    resultVector.push(formattedJson);
+  }
+  writeInFile(resultVector);
+})();
