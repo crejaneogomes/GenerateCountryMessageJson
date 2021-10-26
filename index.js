@@ -31,24 +31,6 @@ const firstLetterInLowerCase = (word) => {
  return word.replace(REGEX_FIRST_LETTER, (c) => c.toLowerCase());
 }
 
-const generateTexts = () => {
-  var json = {};
-  var jsonPai = {};
-  for (i = 0; i < countriesJson.length; i++) {
-    var primeira = firstLetterInLowerCase(countriesJson[i].nome_pais_int);
-    var pais_ingles = removeWhiteSpacesAndSpecialCharacters(primeira);
-    var pais_ingles_diferente = replaceWhiteSpaceForUnderlineAndRemoveSpecialCharacters(primeira);
-    //console.log(pais_ingles+'Country: { id: \'DataSections.ResidenceData.'+pais_ingles+'Country\', defaultMessage: \''+pais[i].nome_pais+'\',},');
-    //console.log('[COUNTRY.'+pais_ingles_diferente.toUpperCase()+']: messages.'+pais_ingles+'Country,');
-    // console.log(
-    //   pais_ingles_diferente.toUpperCase() +
-    //     ": '" +
-    //     pais_ingles_diferente.toUpperCase() +
-    //     "',"
-    // );
-  }
-};
-
 (function () {
   let index;
   var resultVector = [];
